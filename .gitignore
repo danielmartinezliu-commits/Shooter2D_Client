@@ -1,0 +1,71 @@
+# ==========================================
+# GITIGNORE PARA PROYECTO C++ (VISUAL STUDIO) Y SFML
+# ==========================================
+
+# --- Archivos del Sistema y carpetas ocultas de VS ---
+.vs/
+.vscode/
+ipch/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# --- Carpetas de Compilación y Artefactos (Salidas) ---
+# Ignorar las carpetas donde Visual Studio mete los ejecutables y archivos .obj
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ARM/
+ARM64/
+
+# --- Archivos generados por el Compilador/Enlazador ---
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.lastbuildstate
+*.idb
+*.exe
+*.dll
+*.lib
+*.exp
+*.log
+*.recipe
+*.iobj
+*.ipdb
+
+# --- Archivos temporales y de base de datos de VS ---
+*.sdf
+*.opensdf
+*.vcbal
+*.VC.db
+*.VC.VC.opendb
+
+# --- Archivos de Rider / JetBrains (Por si usas el IDE híbrido) ---
+.idea/
+*.sln.iml
+
+# --- Dependencias Locales (SFML) ---
+# Es una buena práctica no subir las librerías al Git. 
+# Si creaste una carpeta "Dependencies" dentro del proyecto, descomenta las líneas de abajo:
+# Dependencies/SFML/lib/
+# Dependencies/SFML/bin/
+
+# --- Excepciones (Archivos que SÍ queremos conservar) ---
+# No queremos ignorar los archivos de configuración del proyecto ni la solución,
+# de lo contrario el profesor no podrá abrir tu proyecto en su Visual Studio.
+!*.sln
+!*.vcxproj
+!*.vcxproj.filters
+!*.vcxproj.user
+!*.h
+!*.hpp
+!*.cpp
+!*.c
+
+# --- Configuración de Base de Datos y Servidor Local ---
+# Si guardas contraseñas o datos de conexión a XAMPP en un archivo externo config.txt, 
+# es recomendable ignorarlo para proteger tus credenciales.
+# config_local.txt
