@@ -81,7 +81,6 @@ int main()
                     matchmakingScreen->handleEvent(*event);
                     break;
                 case AppState::Game:
-                    gameScreen->handleEvent(*event);
                     break;
             }
         }
