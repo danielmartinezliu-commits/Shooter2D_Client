@@ -4,9 +4,7 @@
 // Timeout de conexion TCP al servidor de autenticacion (segundos)
 static constexpr float CONNECTION_TIMEOUT_S = 5.f;
 
-std::future<AuthResult> AuthClient::login(const std::string& host, unsigned short port,
-                                           const std::string& username,
-                                           const std::string& password)
+std::future<AuthResult> AuthClient::login(const std::string& host, unsigned short port, const std::string& username, const std::string& password)
 {
     return std::async(std::launch::async, [=]() mutable -> AuthResult
     {
@@ -20,9 +18,7 @@ std::future<AuthResult> AuthClient::login(const std::string& host, unsigned shor
     });
 }
 
-std::future<AuthResult> AuthClient::registerUser(const std::string& host, unsigned short port,
-                                                   const std::string& username,
-                                                   const std::string& password)
+std::future<AuthResult> AuthClient::registerUser(const std::string& host, unsigned short port, const std::string& username, const std::string& password)
 {
     return std::async(std::launch::async, [=]() mutable -> AuthResult
     {
@@ -33,8 +29,7 @@ std::future<AuthResult> AuthClient::registerUser(const std::string& host, unsign
     });
 }
 
-AuthResult AuthClient::sendAndReceive(const std::string& host, unsigned short port,
-                                       sf::Packet& packet)
+AuthResult AuthClient::sendAndReceive(const std::string& host, unsigned short port, sf::Packet& packet)
 {
     // En SFML 3, sf::IpAddress no tiene constructor implicito desde std::string.
     // resolve() hace la resolucion DNS si es necesario y devuelve std::optional.

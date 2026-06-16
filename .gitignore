@@ -11,15 +11,6 @@ ipch/
 *.userosscache
 *.sln.docstates
 
-# --- Carpetas de Compilación y Artefactos (Salidas) ---
-# Ignorar las carpetas donde Visual Studio mete los ejecutables y archivos .obj
-[Dd]ebug/
-[Rr]elease/
-x64/
-x86/
-ARM/
-ARM64/
-
 # --- Archivos generados por el Compilador/Enlazador ---
 *.obj
 *.ilk
@@ -28,7 +19,6 @@ ARM64/
 *.lastbuildstate
 *.idb
 *.exe
-*.dll
 *.lib
 *.exp
 *.log
