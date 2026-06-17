@@ -173,6 +173,34 @@
   <Target Name="CopyConfig" AfterTargets="Build">
     <Copy SourceFiles="$(SolutionDir)server_config.ini" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
+  <!-- DLLs de SFML necesarias para ejecutar el .exe fuera de Visual Studio
+       (en VS funcionan por LocalDebuggerEnvironment, pero al copiar solo
+       x64\Debug a otra maquina faltan si no se copian aqui). -->
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-graphics-d-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-window-d-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-audio-d-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-network-d-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-system-d-3.dll" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-graphics-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-window-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-audio-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-network-3.dll" />
+    <SfmlRuntimeDlls Include="$(SolutionDir)Dependencies\bin\sfml-system-3.dll" />
+  </ItemGroup>
+  <!-- Assets (sprites/sonidos) y mapa.txt: Player::loadTextures()/Map::loadFromFile()
+       los buscan con ruta relativa al directorio de trabajo, que en VS es
+       $(ProjectDir) por defecto pero NO el de un .exe copiado a otra maquina. -->
+  <ItemGroup>
+    <ClientAssetFiles Include="$(ProjectDir)Assets\**\*.*" />
+  </ItemGroup>
+  <Target Name="CopyRuntimeFiles" AfterTargets="Build">
+    <Copy SourceFiles="@(SfmlRuntimeDlls)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ClientAssetFiles)" DestinationFolder="$(OutDir)Assets\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)mapa.txt" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" Condition="Exists('$(ProjectDir)mapa.txt')" />
+  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
