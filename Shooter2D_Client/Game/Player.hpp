@@ -88,7 +88,7 @@ struct InterpSnapshot
 // ================================================================
 // AnimState — estado de la animacion del jugador.
 // ================================================================
-enum class AnimState { Idle, Run, Damage };
+enum class AnimState { Idle, Run, Damage, Taunt };
 
 // ================================================================
 // Player — jugador local o remoto.
@@ -188,6 +188,17 @@ public:
     //         Llamar desde GameScreen al recibir PLAYER_HIT.
     void playDamageAnim();
 
+    // @brief  Activa la animacion de burla (frames 16-23) y reproduce
+    //         QuackSound.mp3. Llamar en el jugador local al pulsar la
+    //         tecla de burla, y en el remoto al recibir PLAYER_TAUNT.
+    //         No tiene efecto en el juego: es puramente cosmetica.
+    void playTaunt();
+
+    // @brief  true mientras la animacion de burla esta en curso.
+    //         Util para evitar reenviar PLAYER_TAUNT en bucle mientras
+    //         se mantiene pulsada la tecla.
+    bool isTaunting() const { return m_animState == AnimState::Taunt; }
+
     // @brief  Avanza el estado de animacion un frame.
     //         Llamar una vez por frame para AMBOS jugadores (local y remoto).
     void tickAnimation(float dt);
@@ -240,6 +251,7 @@ private:
     int          m_animFrame   = 0;
     float        m_animTimer   = 0.f;
     float        m_damageTimer = 0.f;   // Tiempo restante de la animacion de dano
+    float        m_tauntTimer  = 0.f;   // Tiempo restante de la animacion de burla
     sf::Vector2f m_prevAnimPos;         // Para detectar movimiento del jugador remoto
 
     // ------------------------------------------------------------------

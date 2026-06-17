@@ -13,7 +13,9 @@
 static sf::Texture               s_texPlayer[2];
 static sf::Texture               s_texGlock;
 static sf::SoundBuffer           s_gunBuffer;
+static sf::SoundBuffer           s_quackBuffer;
 static std::optional<sf::Sound>  s_gunSound;   // optional: Sound requiere buffer en constructor
+static std::optional<sf::Sound>  s_quackSound;
 static bool                      s_texturesLoaded = false;
 static int                       s_frameW         = 1;
 static int                       s_frameH         = 1;
@@ -27,6 +29,8 @@ static constexpr int   ANIM_RUN_START  = 4;
 static constexpr int   ANIM_RUN_COUNT  = 9;
 static constexpr int   ANIM_DMG_START  = 13;
 static constexpr int   ANIM_DMG_COUNT  = 3;
+static constexpr int   ANIM_TAUNT_START= 16;
+static constexpr int   ANIM_TAUNT_COUNT=  8;
 static constexpr float ANIM_FPS        = 10.f; // Frames de animacion por segundo
 
 void Player::loadTextures(const std::string& assetsPath)
@@ -59,6 +63,17 @@ void Player::loadTextures(const std::string& assetsPath)
     else
     {
         std::cerr << "[PLAYER] GunSound.mp3 no encontrado — disparos sin sonido.\n";
+    }
+
+    // Cargar sonido de burla (opcional: si falla, la burla es silenciosa)
+    if (s_quackBuffer.loadFromFile(assetsPath + "QuackSound.mp3"))
+    {
+        s_quackSound.emplace(s_quackBuffer);
+        s_quackSound->setVolume(60.f);
+    }
+    else
+    {
+        std::cerr << "[PLAYER] QuackSound.mp3 no encontrado — burla sin sonido.\n";
     }
 
     s_texturesLoaded = true;
@@ -402,6 +417,17 @@ void Player::playDamageAnim()
     m_damageTimer = static_cast<float>(ANIM_DMG_COUNT) / ANIM_FPS;
 }
 
+void Player::playTaunt()
+{
+    m_animState  = AnimState::Taunt;
+    m_animFrame  = ANIM_TAUNT_START;
+    m_animTimer  = 0.f;
+    m_tauntTimer = static_cast<float>(ANIM_TAUNT_COUNT) / ANIM_FPS;
+
+    if (s_quackSound)
+        s_quackSound->play();
+}
+
 void Player::tickAnimation(float dt)
 {
     // Determinar si el jugador esta en movimiento.
@@ -431,6 +457,31 @@ void Player::tickAnimation(float dt)
                 // Repetir los frames de dano hasta que expire el timer
                 if (m_animFrame >= ANIM_DMG_START + ANIM_DMG_COUNT)
                     m_animFrame = ANIM_DMG_START;
+            }
+        }
+        return;
+    }
+
+    if (m_animState == AnimState::Taunt)
+    {
+        m_tauntTimer -= dt;
+        if (m_tauntTimer <= 0.f)
+        {
+            // Fin de la animacion de burla: volver a idle o run
+            m_animState = moving ? AnimState::Run : AnimState::Idle;
+            m_animFrame = moving ? ANIM_RUN_START : ANIM_IDLE_START;
+            m_animTimer = 0.f;
+        }
+        else
+        {
+            m_animTimer += dt;
+            if (m_animTimer >= 1.f / ANIM_FPS)
+            {
+                m_animTimer = 0.f;
+                ++m_animFrame;
+                // La burla no se repite: se queda en el ultimo frame hasta que expire el timer
+                if (m_animFrame >= ANIM_TAUNT_START + ANIM_TAUNT_COUNT)
+                    m_animFrame = ANIM_TAUNT_START + ANIM_TAUNT_COUNT - 1;
             }
         }
         return;

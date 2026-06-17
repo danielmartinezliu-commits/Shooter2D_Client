@@ -91,6 +91,14 @@ void GameScreen::update(bool windowFocused)
                 m_local->lastBulletPos().x,
                 m_local->lastBulletPos().y,
                 m_local->isFacingRight());
+
+        // Burla: cosmetica, sin prediccion ni reconciliacion. isTaunting()
+        // evita reenviar el mensaje en bucle mientras la animacion esta activa.
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T) && !m_local->isTaunting())
+        {
+            m_local->playTaunt();
+            m_gameClient.sendTaunt();
+        }
     }
     else
     {
@@ -214,6 +222,14 @@ void GameScreen::handleGameEvents()
             m_hudText.setPosition({
                 WINDOW_W / 2.f - GAME_OVER_OFFSET_X,
                 WINDOW_H / 2.f - GAME_OVER_OFFSET_Y });
+        }
+        else if (type == Protocol::MessageType::PLAYER_TAUNT)
+        {
+            // El relay del servidor solo llega del rival (el local ya se
+            // reprodujo localmente al pulsar la tecla), pero comprobamos
+            // el indice por si el orden de los paquetes UDP varia.
+            if (ev->p1 != m_localPlayerIndex)
+                m_remote->playTaunt();
         }
         else if (type == Protocol::MessageType::GAME_ABANDON)
         {

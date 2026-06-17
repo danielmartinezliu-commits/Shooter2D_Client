@@ -67,6 +67,11 @@ public:
     //        El servidor crea el ServerBullet y hace relay al rival.
     void sendBullet(float bx, float by, bool facingRight);
 
+    // @brief Envia una burla al servidor (UDP no fiable, sin ACK).
+    //        El servidor hace relay al rival para que reproduzca la
+    //        misma animacion y sonido. Puramente cosmetico.
+    void sendTaunt();
+
     // @brief Envia PING al servidor cada PING_INTERVAL segundos.
     //        Llamar una vez por frame con el dt del frame.
     //        El servidor responde con PONG y usa los PING para detectar

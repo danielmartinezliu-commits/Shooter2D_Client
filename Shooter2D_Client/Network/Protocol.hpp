@@ -90,6 +90,10 @@ namespace Protocol
         // [uint8: disconnectedPlayerIndex]
         GAME_ABANDON = 92,
 
+        // Burla: animacion + sonido, sin efecto en el juego (UDP no fiable).
+        // [uint8: playerIndex] -- Client->Server y Server->Client (relay)
+        PLAYER_TAUNT = 94,
+
         //Launcher: verificacion de mapa (TCP, antes del login)
         MAP_VERSION_CHECK = 96,   // Client->Server [uint32: hash FNV-1a del mapa local]
         MAP_UP_TO_DATE = 97,   // Server->Client (sin payload)

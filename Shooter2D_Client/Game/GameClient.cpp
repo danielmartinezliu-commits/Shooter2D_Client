@@ -110,6 +110,16 @@ void GameClient::sendBullet(float bx, float by, bool facingRight)
     m_udp.send(buf, off, *m_serverAddr, m_sessionPort);
 }
 
+void GameClient::sendTaunt()
+{
+    if (!m_connected) return;
+    char        buf[2];
+    std::size_t off = 0;
+    off = wU8(buf, off, static_cast<uint8_t>(Protocol::MessageType::PLAYER_TAUNT));
+    off = wU8(buf, off, m_playerIndex);
+    m_udp.send(buf, off, *m_serverAddr, m_sessionPort);
+}
+
 void GameClient::tickPing(float dt)
 {
     if (!m_connected) return;
@@ -159,6 +169,13 @@ void GameClient::receiveAll()
             GameEvent ev;
             ev.type = msgType;
             off = rU8(buf, off, ev.p1);
+            m_eventQueue.push_back(ev);
+        }
+        else if (t == Protocol::MessageType::PLAYER_TAUNT)
+        {
+            GameEvent ev;
+            ev.type = msgType;
+            off = rU8(buf, off, ev.p1); // playerIndex que hizo la burla
             m_eventQueue.push_back(ev);
         }
         else if (t == Protocol::MessageType::PLAYER_POS
